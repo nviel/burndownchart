@@ -110,7 +110,7 @@ def getJsonFromTrello():
 	trelloConf.close()
 
 	url = "https://api.trello.com/1/board/" + conf['boardId'] +"?key="+conf['key']+"&token="+conf['token']+"&lists=open&cards=visible"
-	print(url)
+	#print(url)
 
 	f = urllib.request.urlopen(url)
 	jsonString = f.read()
@@ -132,7 +132,7 @@ class Iteration:
 				(self.id, self.startDate, self.finishDate) = t
 				#print("["+self.id+"]["+ self.startDate+"]["+ self.finishDate+"]")
 		confFile.close()
-		self.statFileName = self.id + ".stat"
+		self.statFileName = "../" + self.id + ".stat"
 
 	def __str__(self):
 		s = "itération [" + self.id         + "]\n"
