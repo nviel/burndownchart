@@ -32,6 +32,9 @@
 # --------------------------
 #https://api.trello.com/1/board/lkhlskqj?key=81r2476197846c560999993e1105ec19&token=d8b5ea9a9b94f727334bc4b2c11f3efc41ff3ecac5be9e92206ecxxxxxxxxxxx&lists="open"&cards="visible"
 
+# la lib https://github.com/plish/Trolly me semble fort sympathique : à tester
+# https://bitbucket.org/btubbs/trollop semble bien aussi (delete implémenté)  
+
 # DONE:
 # * admettre les ',' dans les estimations numérique (ex: 0,5 au lieu de 0.5)
 # * Récupérer l'id du sprint dans un fichier de conf
@@ -42,6 +45,10 @@
 #   o Comment gérer les reprises
 # * générer l'image du chart
 # * mettre à jour l'image du chart dans la carte qui va bien?
+#   o POST /1/cards
+#   o DELETE /1/cards/[card id or shortlink]/attachments/[idAttachment]
+#   o POST /1/cards/[cart id]/attachments/   (https://github.com/plish/Trolly/blob/master/trolly/card.py)
+#   o PUT /1/cards/[card id or shortlink]/idAttachmentCover
 
 
 import json
