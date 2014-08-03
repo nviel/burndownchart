@@ -51,8 +51,7 @@
 #   o PUT /1/cards/[card id or shortlink]/idAttachmentCover
 
 
-import json
-import urllib.request
+from trello_client import TrelloClient 
 from datetime import date
 
 
@@ -99,13 +98,13 @@ def getRemainingCharge(board):
 #--------------------------------------------------------------------------------------------------
 # FIXME: la lecture du fichier de conf est vraiment faite à l'arrache.
 #--------------------------------------------------------------------------------------------------
-def getJsonFromTrello():
-	# board = json.loads(<json as a string>)
-	# board = json.load(<json as a file>)
+def getConf():
 	trelloConf = open("trello.conf","r")
 	conf={}
 	for line in trelloConf:
 		# traitement des commentaires unilignes
+		if line[-1] == '\n':
+			line = line[:-1]
 		comPos = line.find('#')
 		if (comPos != -1):
 			line = line[:comPos]
@@ -113,15 +112,9 @@ def getJsonFromTrello():
 		if len(line) < 2:
 			continue
 		(key,val)=line.split('=')
-		conf[key]=val[:-1]
+		conf[key] = val
 	trelloConf.close()
-
-	url = "https://api.trello.com/1/board/" + conf['boardId'] +"?key="+conf['key']+"&token="+conf['token']+"&lists=open&cards=visible"
-	#print(url)
-
-	f = urllib.request.urlopen(url)
-	jsonString = f.read()
-	return json.loads(jsonString.decode('utf8'))
+	return (conf['key'],conf['token'],conf['boardId'])
 
 #--------------------------------------------------------------------------------------------------
 class Iteration:
@@ -152,16 +145,17 @@ class Iteration:
 		statFile.write(str(date.today()) + "\t" + str(charge) + '\n')
 		statFile.close()
 
-
-
-
 #--------------------------------------------------------------------------------------------------
 #  MAIN
 #--------------------------------------------------------------------------------------------------
 
 iteration = Iteration()
-board = getJsonFromTrello()
+(key, token, board_id) = getConf()
+connector = TrelloClient(key, token)
+board = connector.getBoard(board_id)
+
 charge = getRemainingCharge(board)
-iteration.logNewCharge(charge)
+#iteration.logNewCharge(charge)
+print(str(date.today()) + "\t" + str(charge))
 
 
