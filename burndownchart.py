@@ -76,21 +76,32 @@ def getCardCharge(card):
 		
 	return charge
 
+
+
 #--------------------------------------------------------------------------------------------------
-def getRemainingCharge(board):
+def getCardByName(board, name):
+	for c in board['cards']:
+		if c['name'] == name:
+			return c
+	return None
+	
+#--------------------------------------------------------------------------------------------------
+def getDoneListId(board):
 	# trouver l'id de la liste dont le nom est 'Fini'
 	lists = board['lists']
 	for l in lists:
-	        if l['name'] == 'Fini':
-	                doneListId = l['id']
-	#print(endListId)
+		if l['name'] == 'Fini':
+			return l['id']
+	return None
 
+#--------------------------------------------------------------------------------------------------
+def getRemainingCharge(board, doneListId):
 	charge = 0
 	cards = board['cards']
 	for c in cards:
-	        if c['idList'] == doneListId or c['closed']:
-	                continue
-	        charge += getCardCharge(c)
+		if c['idList'] == doneListId or c['closed']:
+			continue
+		charge += getCardCharge(c)
 
 	return charge
 
@@ -148,14 +159,40 @@ class Iteration:
 #--------------------------------------------------------------------------------------------------
 #  MAIN
 #--------------------------------------------------------------------------------------------------
+CHART_CARD_NAME='BURN DOWN CHART'
 
 iteration = Iteration()
 (key, token, board_id) = getConf()
 connector = TrelloClient(key, token)
 board = connector.getBoard(board_id)
 
-charge = getRemainingCharge(board)
+done_list_id = getDoneList(board)
+charge = getRemainingCharge(board, done_list_id)
 #iteration.logNewCharge(charge)
 print(str(date.today()) + "\t" + str(charge))
 
+# calcul du graphique mis à jour
+
+# récupération de la carte du chart
+chart_card = getCardByName(board,CHART_CARD_NAME)
+
+# si elle n'existe pas on la cree
+if chart_card is None:
+	char_card = connector.addCard(done_list_id, CHART_CARD_NAME)
+
+# recupéreation de l'attachement de couverture
+attach= connector.getCoverAttach(done_list_id)
+# s'il existe on le supprime
+
+if attach.__class__.__name__ == 'list':
+	attach = attach[0]
+	connector.delAttachment(chart_card['id'], attach['id'])
+
+# attachement du chart mis à jour (en coverture par défaut)
+chart_file = open("test.png","rb")
+connector.addAttachment(chart_card['id'], chart_file, 'chart')
+chart_file.close()
+
+# déplacement de la carte du chart en tête de liste.
+connector.putCardOnTop(chart_card['id'])
 
