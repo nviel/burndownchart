@@ -53,7 +53,7 @@
 
 from trello_client import TrelloClient 
 from datetime import date
-
+from iteration import Iteration
 
 
 #--------------------------------------------------------------------------------------------------
@@ -127,34 +127,6 @@ def getConf():
 	trelloConf.close()
 	return (conf['key'],conf['token'],conf['boardId'])
 
-#--------------------------------------------------------------------------------------------------
-class Iteration:
-	def __init__(self):
-		confFile = open("iteration.conf",'r')
-		for line in confFile:
-			# traitement des commentaires unilignes
-			comPos = line.find('#')
-			if (comPos != -1):
-				line = line[:comPos]
-			line = line.strip()
-
-			t = line.split()
-			if len(t) == 3:
-				(self.id, self.startDate, self.finishDate) = t
-				#print("["+self.id+"]["+ self.startDate+"]["+ self.finishDate+"]")
-		confFile.close()
-		self.statFileName = "../" + self.id + ".stat"
-
-	def __str__(self):
-		s = "itération [" + self.id         + "]\n"
-		s+= "départ ["    + self.startDate  + "]\n" 	
-		s+= "fin ["       + self.finishDate + "]\n"
-		return s
-
-	def logNewCharge(self, charge):
-		statFile = open(self.statFileName,'a')
-		statFile.write(str(date.today()) + "\t" + str(charge) + '\n')
-		statFile.close()
 
 #--------------------------------------------------------------------------------------------------
 #  MAIN
@@ -168,10 +140,12 @@ board = connector.getBoard(board_id)
 
 done_list_id = getDoneList(board)
 charge = getRemainingCharge(board, done_list_id)
-#iteration.logNewCharge(charge)
+iteration.logNewCharge(charge)
+
 print(str(date.today()) + "\t" + str(charge))
 
 # calcul du graphique mis à jour
+build_chart_file(chart_name, iteration)
 
 # récupération de la carte du chart
 chart_card = getCardByName(board,CHART_CARD_NAME)
