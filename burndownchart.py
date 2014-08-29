@@ -54,6 +54,7 @@
 from trello_client import TrelloClient 
 from datetime import date
 from iteration import Iteration
+import make_chart
 
 
 #--------------------------------------------------------------------------------------------------
@@ -138,24 +139,25 @@ iteration = Iteration()
 connector = TrelloClient(key, token)
 board = connector.getBoard(board_id)
 
-done_list_id = getDoneList(board)
+done_list_id = getDoneListId(board)
 charge = getRemainingCharge(board, done_list_id)
 iteration.logNewCharge(charge)
 
 print(str(date.today()) + "\t" + str(charge))
 
 # calcul du graphique mis à jour
-build_chart_file(chart_name, iteration)
+chart_file_name = iteration.id + '.png'
+make_chart.build_chart_file( chart_file_name, iteration)
 
 # récupération de la carte du chart
 chart_card = getCardByName(board,CHART_CARD_NAME)
 
 # si elle n'existe pas on la cree
 if chart_card is None:
-	char_card = connector.addCard(done_list_id, CHART_CARD_NAME)
+	chart_card = connector.addCard(done_list_id, CHART_CARD_NAME)
 
-# recupéreation de l'attachement de couverture
-attach= connector.getCoverAttach(done_list_id)
+# recupération de l'attachement de couverture
+attach= connector.getCoverAttach(chart_card['id'])
 # s'il existe on le supprime
 
 if attach.__class__.__name__ == 'list':
@@ -163,7 +165,7 @@ if attach.__class__.__name__ == 'list':
 	connector.delAttachment(chart_card['id'], attach['id'])
 
 # attachement du chart mis à jour (en coverture par défaut)
-chart_file = open("test.png","rb")
+chart_file = open(chart_file_name,"rb")
 connector.addAttachment(chart_card['id'], chart_file, 'chart')
 chart_file.close()
 

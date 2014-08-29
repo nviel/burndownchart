@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-import Image
-import ImageDraw
+#import PIL
+#import Image
+#import ImageDraw
+
+from PIL import Image, ImageDraw
 from datetime import date
 from iteration import Iteration
 
@@ -29,6 +32,9 @@ def drawChart(width, height, it):
 	# tracé théorique (si toute l'équipe travaillait parfaitement selon les prévisions).
 	# TODO
 	
+	if len(it.stats) == 0:
+		return im
+	
 	# tracé réel (courbe issue des mesures)
 	valmax=0   # valeur maximum de la courbe
 	for (t,v) in it.stats:
@@ -47,7 +53,7 @@ def drawChart(width, height, it):
 		xy.append(height - b_m - int(y_coef * v))
 	draw.line(xy, fill=(0,0,200), width=3)
 	
-	im.save("chart.png")
+	return im
 
 #------------------------------------------------------------------------------
 def build_chart_file(chart_file_name, it):
@@ -57,6 +63,7 @@ def build_chart_file(chart_file_name, it):
 
 if __name__ == '__main__':
 	iteration = Iteration()
+	print(iteration)
 	build_chart_file('TEST_CHART.png', iteration)
 
 
