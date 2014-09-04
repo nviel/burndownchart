@@ -8,56 +8,65 @@ from PIL import Image, ImageDraw
 from datetime import date
 from iteration import Iteration
 
-#------------------------------------------------------------------------------
-def drawChart(width, height, it):
-	# margins' definition.
-	l_m = 30 
-	r_m = u_m = b_m = 20
+class Chart:
+	
+	def __init__(self, w, h, it):
+		self.w = w
+		self.h = h
+		self.it = it
+		self.l_m = 30
+		self.r_m = self.u_m = self.b_m = 20
+		valmax=0   # valeur maximum de la courbe
+		for (t,v) in it.stats:
+			if v > valmax:
+				valmax = v
+		# facteur d'échelle x et y
+		self.y_coef = (self.h - self.u_m - self.b_m) / valmax
+		self.x_coef = (self.w - self.l_m - self.r_m) / it.duration
+		
+	def X(self, x):
+		return self.l_m + int(self.x_coef * x)
+	
+	def Y(self, y):
+		return self.h - self.b_m - int(self.y_coef * y)
+	
+	def draw(self):
+		im = Image.new('RGB',(self.w,self.h)) 
+		draw=ImageDraw.Draw(im)
+		# fond blanc
+		draw.rectangle((0,0,self.w,self.h), fill=(255,255,255))
+		# axes
+		draw.line([ (self.l_m, self.u_m), 
+			(self.l_m, self.h - self.b_m),
+			(self.w - self.r_m, self.h - self.b_m)
+			], 
+			fill=(0,0,0))
+		# étiquettes
+		draw.text((2, self.h - self.b_m +2), self.it.startDate, fill=(0,0,0))
+		draw.text((self.w - 2 - draw.textsize(self.it.endDate)[0], self.h - self.b_m +2), self.it.endDate, fill=(0,0,0))
+		draw.text((2, self.h - self.b_m - 8), "0", fill=(0,0,0))
+	
+		if len(self.it.stats) == 0:
+			return im
+	
+		draw.text((2, self.Y(self.it.stats[0][1]) - 3), str(self.it.stats[0][1]), fill=(0,0,0))
 
-	im = Image.new('RGB',(width,height)) 
-	draw=ImageDraw.Draw(im)
-	# fond blanc
-	draw.rectangle((0,0,width,height), fill=(255,255,255))
-	# axes
-	draw.line([ (l_m, u_m), 
-	            (l_m, height - b_m),
-	            (width - r_m, height - b_m)
-	          ], 
-	          fill=(0,0,0))
-	# étiquettes
-	draw.text((2, height - b_m +2), it.startDate, fill=(0,0,0))
-	draw.text((width - 2 - draw.textsize(it.endDate)[0], height - b_m +2), it.endDate, fill=(0,0,0))
-	draw.text((2, height - b_m - 8), "0", fill=(0,0,0))
+		# tracé théorique (si toute l'équipe travaillait parfaitement selon les prévisions).
+		draw.line((self.X(0), self.Y(self.it.stats[0][1]), self.X(self.it.duration), self.Y(0)), fill=(200,0,0), width=2)
 	
-	# tracé théorique (si toute l'équipe travaillait parfaitement selon les prévisions).
-	# TODO
+		# tracé réel
+		xy = []
+		for (t,v) in self.it.stats:
+			xy.append(self.X(t))
+			xy.append(self.Y(v))
+		draw.line(xy, fill=(0,0,200), width=3)
 	
-	if len(it.stats) == 0:
 		return im
-	
-	# tracé réel (courbe issue des mesures)
-	valmax=0   # valeur maximum de la courbe
-	for (t,v) in it.stats:
-		if v > valmax:
-			valmax = v
-			
-	# facteur d'échelle x et y
-	y_coef = (height - u_m - b_m) / valmax
-	x_coef = (width - l_m - r_m) / it.duration
-	draw.text((2, height - b_m - int(y_coef * it.stats[0][1]) - 3), str(it.stats[0][1]), fill=(0,0,0))
-	
-	# tracé 
-	xy = []
-	for (t,v) in it.stats:
-		xy.append(l_m + int(x_coef * t))
-		xy.append(height - b_m - int(y_coef * v))
-	draw.line(xy, fill=(0,0,200), width=3)
-	
-	return im
 
 #------------------------------------------------------------------------------
 def build_chart_file(chart_file_name, it):
-	im = drawChart(400,300, it)
+	chart = Chart(400,300, it)
+	im = chart.draw()
 	im.save(chart_file_name)
 
 
