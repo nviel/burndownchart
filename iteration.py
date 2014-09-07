@@ -48,18 +48,19 @@ class Iteration:
 		statFile.close()
 		self.loadStats()
 
-	# entree: une chaine du type "aaaa-mm-jj"
-	# retourne le nombre de jour depuis le 01-01-01
 	#------------------------------------------------------------------------------
 	@staticmethod
 	def str2day(s_date):
+	""" entree: une chaine du type "aaaa-mm-jj"
+	    retourne le nombre de jour depuis le 01-01-01"""
 		t = list(map(int,s_date.split('-')))
 		return date(t[0],t[1],t[2]).toordinal()
 
 
-	# charge les enregistrements de l'itération dans un dictionnaire ordonné.
 	#------------------------------------------------------------------------------
 	def loadStats(self):
+	""" charge les enregistrements de l'itération dans une liste triée 
+	    par l'ordre chronologique"""
 		stats = {}
 		t0 = self.str2day(self.startDate)
 		try: 

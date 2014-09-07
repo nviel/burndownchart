@@ -9,7 +9,7 @@ from datetime import date
 from iteration import Iteration
 
 #------------------------------------------------------------------------------
-def drawChart(width, height, it):
+def draw_chart(width, height, it):
 	# margins' definition.
 	l_m = 30 
 	r_m = u_m = b_m = 20
@@ -57,7 +57,7 @@ def drawChart(width, height, it):
 
 #------------------------------------------------------------------------------
 def build_chart_file(chart_file_name, it):
-	im = drawChart(400,300, it)
+	im = draw_chart(400,300, it)
 	im.save(chart_file_name)
 
 
