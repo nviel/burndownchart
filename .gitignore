@@ -1,5 +1,13 @@
 iteration.conf
 trello.conf
+*.pyc
+*.swp
+
+# dolphin
+.directory
+
+# tests
+*.png
 
 #################
 ## Eclipse
