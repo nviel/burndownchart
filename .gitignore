@@ -3,6 +3,9 @@ trello.conf
 *.pyc
 *.swp
 
+# dolphin
+.directory
+
 #################
 ## Eclipse
 #################
