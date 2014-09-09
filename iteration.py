@@ -4,9 +4,9 @@ from datetime import date
 class Iteration:
 	def __init__(self):
 		self.id         = '' 
-		self.startDate  = ''
-		self.endDate = ''
-		self.statsFileName = ''
+		self.start_date  = ''
+		self.end_date = ''
+		self.stats_file_name = ''
 		self.duration   = 0       # duree de l'itération en jour calendaire
 		self.stats      = []      # [(N° du jour, charge restante), (,)..]
 		
@@ -21,50 +21,54 @@ class Iteration:
 
 			t = line.split()
 			if len(t) == 3:
-				(self.id, self.startDate, self.endDate) = t
-				#print("["+self.id+"]["+ self.startDate+"]["+ self.endDate+"]")
+				(self.id, self.start_date, self.end_date) = t
+				#print("["+self.id+"]["+ self.start_date+"]["+ self.end_date+"]")
 		confFile.close()
-		self.statsFileName = "../" + self.id + ".stat"
-		self.duration = self.str2day(self.endDate) - self.str2day(self.startDate) + 1
+		self.stats_file_name = "../" + self.id + ".stat"
+		self.duration = self.str2day(self.end_date) - self.str2day(self.start_date) + 1
 		
 		# chargement de l'historique de l'itération
-		self.loadStats()
+		self.load_stats()
 
 	#------------------------------------------------------------------------------
 	def __str__(self):
 		s = "itération ["     + self.id         + "]\n"
-		s+= "départ ["        + self.startDate  + "]\n" 	
-		s+= "fin ["           + self.endDate + "]\n"
-		s+= "statsFileName [" + self.statsFileName + "]\n"
+		s+= "départ ["        + self.start_date  + "]\n" 	
+		s+= "fin ["           + self.end_date + "]\n"
+		s+= "stats_file_name [" + self.stats_file_name + "]\n"
 		s+= "duration ["      + str(self.duration) + "]\n"
 		s+= "stats ["         + str(self.stats)      + "]\n"
 		return s
 
 	# enregistre une nouvelle charge dans les stats de l'itération
 	#------------------------------------------------------------------------------
-	def logNewCharge(self, charge):
-		statFile = open(self.statsFileName,'a')
+	def log_new_charge(self, charge):
+		statFile = open(self.stats_file_name,'a')
 		statFile.write(str(date.today()) + "\t" + str(charge) + '\n')
 		statFile.close()
-		self.loadStats()
+		self.load_stats()
 
 	#------------------------------------------------------------------------------
 	@staticmethod
 	def str2day(s_date):
-	""" entree: une chaine du type "aaaa-mm-jj"
-	    retourne le nombre de jour depuis le 01-01-01"""
+		""" 
+		entree: une chaine du type "aaaa-mm-jj"
+		retourne le nombre de jour depuis le 01-01-01
+		"""
 		t = list(map(int,s_date.split('-')))
 		return date(t[0],t[1],t[2]).toordinal()
 
 
 	#------------------------------------------------------------------------------
-	def loadStats(self):
-	""" charge les enregistrements de l'itération dans une liste triée 
-	    par l'ordre chronologique"""
+	def load_stats(self):
+		""" 
+		charge les enregistrements de l'itération dans une liste triée 
+		par l'ordre chronologique
+		"""
 		stats = {}
-		t0 = self.str2day(self.startDate)
+		t0 = self.str2day(self.start_date)
 		try: 
-			f  = open(self.statsFileName,"r")
+			f  = open(self.stats_file_name,"r")
 		except:
 			print("aucun enregistrement existant pour l'itération courrante")
 			return {}

@@ -6,6 +6,9 @@ trello.conf
 # dolphin
 .directory
 
+# tests
+*.png
+
 #################
 ## Eclipse
 #################

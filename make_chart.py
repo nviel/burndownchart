@@ -42,8 +42,8 @@ class Chart:
 			], 
 			fill=(0,0,0))
 		# étiquettes
-		draw.text((2, self.h - self.b_m +2), self.it.startDate, fill=(0,0,0))
-		draw.text((self.w - 2 - draw.textsize(self.it.endDate)[0], self.h - self.b_m +2), self.it.endDate, fill=(0,0,0))
+		draw.text((2, self.h - self.b_m +2), self.it.start_date, fill=(0,0,0))
+		draw.text((self.w - 2 - draw.textsize(self.it.end_date)[0], self.h - self.b_m +2), self.it.end_date, fill=(0,0,0))
 		draw.text((2, self.h - self.b_m - 8), "0", fill=(0,0,0))
 	
 		if len(self.it.stats) == 0:

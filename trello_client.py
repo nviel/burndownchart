@@ -25,7 +25,7 @@ class TrelloClient(object):
             raise Exception()
 
 #--------------------------------------------------------------------------------------------------
-    def getBoard(self, board_id):
+    def get_board(self, board_id):
         #return self.fetch_json("/board/" + board_id, 'GET', {'lists' : 'open', 'cards' : 'visible', 'card_attachments' : 'cover'})
          r = requests.get(self.base_url + "/board/" + board_id, 
                           params =  self.add_authorisation({'lists' : 'open', 'cards' : 'visible', 'card_attachments' : 'cover'}))
@@ -33,7 +33,7 @@ class TrelloClient(object):
          return r.json()
 
 #--------------------------------------------------------------------------------------------------
-    def addCard(self, list_id, cardName):
+    def add_card(self, list_id, cardName):
         # bizarrement il semble qu'on puisse utiliser les parametres dans l'url alors qu'on est en post
         # comme je ne parvenais pas a le faire dans le body... c'est parti comme ca.
 #       return self.fetch_json("/lists/" + list_id + "/cards", 'POST', {'name' : cardName})
@@ -42,21 +42,21 @@ class TrelloClient(object):
          self.check_http_status(r)
          return r.json()
 
-    def putCardOnTop(self, card_id):
+    def put_card_on_top(self, card_id):
          r = requests.put(self.base_url + "/cards/" + card_id,
                           params = self.add_authorisation({'pos':'top'}))
          self.check_http_status(r)
          return r.json()
 
 #--------------------------------------------------------------------------------------------------
-    def getCoverAttach(self, card_id):
+    def get_cover_attachment(self, card_id):
         r = requests.get( self.base_url + "/cards/" + card_id + "/attachments", 
                           params =  self.add_authorisation({'filter':'cover'}))
         self.check_http_status(r)
         return r.json()      
 
 #--------------------------------------------------------------------------------------------------
-    def addAttachment(self, card_id, attachedFile, name):
+    def add_attachment(self, card_id, attachedFile, name):
         # POST /1/cards/[card id or shortlink]/attachments
         r = requests.post( self.base_url + "/cards/" + card_id + "/attachments",
                            params =  self.add_authorisation({}),
@@ -66,7 +66,7 @@ class TrelloClient(object):
         return r.json()
 
 #--------------------------------------------------------------------------------------------------
-    def delAttachment(self, card_id, attachment_id):
+    def del_attachment(self, card_id, attachment_id):
         r = requests.delete( self.base_url + "/cards/" + card_id + "/attachments/" + attachment_id,
                             params =  self.add_authorisation({}))
         self.check_http_status(r)
