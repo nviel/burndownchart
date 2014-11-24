@@ -8,6 +8,7 @@ trello.conf
 
 # tests
 *.png
+*.stat
 
 #################
 ## Eclipse

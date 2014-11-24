@@ -24,7 +24,7 @@ class Iteration:
 				(self.id, self.start_date, self.end_date) = t
 				#print("["+self.id+"]["+ self.start_date+"]["+ self.end_date+"]")
 		confFile.close()
-		self.stats_file_name = "../" + self.id + ".stat"
+		self.stats_file_name = self.id + ".stat"
 		self.duration = self.str2day(self.end_date) - self.str2day(self.start_date) + 1
 		
 		# chargement de l'historique de l'itération

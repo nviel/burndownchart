@@ -49,7 +49,7 @@ class Chart:
 		if len(self.it.stats) == 0:
 			return im
 	
-		draw.text((2, self.Y(self.it.stats[0][1]) - 3), str(self.it.stats[0][1]), fill=(0,0,0))
+		draw.text((2, self.Y(self.it.stats[0][1]) - 3), str(int(self.it.stats[0][1])), fill=(0,0,0))
 
 		# tracé théorique (si toute l'équipe travaillait parfaitement selon les prévisions).
 		draw.line((self.X(0), self.Y(self.it.stats[0][1]), self.X(self.it.duration), self.Y(0)), fill=(200,0,0), width=2)
